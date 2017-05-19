@@ -1,4 +1,4 @@
-package sample;
+package robotArm.gui;
 
 import static java.lang.String.*;
 
