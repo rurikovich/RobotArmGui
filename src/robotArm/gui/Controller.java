@@ -1,6 +1,10 @@
 package robotArm.gui;
 
-import static java.lang.String.*;
+import jssc.SerialPortException;
+import robotArm.serial.PortReaderAction;
+import robotArm.serial.SerialPortManager;
+
+import static java.lang.String.format;
 
 public class Controller {
     public static final int xStep = 1;
@@ -19,6 +23,19 @@ public class Controller {
     private int z;
 
     private int gripper;
+
+    private SerialPortManager serialPortManager;
+
+    private PortReaderAction readerAction = buffer -> {
+        for (byte b : buffer) {
+            System.out.print((char) b);
+        }
+    };
+
+    public Controller() {
+        serialPortManager = new SerialPortManager();
+        serialPortManager.initSerialPort(readerAction);
+    }
 
     public void up() {
         System.out.println("up");
@@ -93,7 +110,11 @@ public class Controller {
 
 
     private void sendToSerialPort(String command) {
-
+        try {
+            serialPortManager.writeToSerialPort(command);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
     }
 
 

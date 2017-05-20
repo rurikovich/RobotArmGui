@@ -10,12 +10,9 @@ public class SerialPortManager {
 
     public static void main(String[] args) throws InterruptedException, SerialPortException {
         SerialPortManager serialPortManager = new SerialPortManager();
-        serialPortManager.initSerialPort(new PortReaderAction() {
-            @Override
-            public void doAction(byte[] buffer) {
-                for (int i = 0; i < buffer.length; i++) {
-                    System.out.print((char) buffer[i]);
-                }
+        serialPortManager.initSerialPort(buffer -> {
+            for (int i = 0; i < buffer.length; i++) {
+                System.out.print((char) buffer[i]);
             }
         });
 
@@ -25,15 +22,19 @@ public class SerialPortManager {
 
     }
 
-    private void closePort() throws SerialPortException {
-        serialPort.closePort();
+    public void closePort()  {
+        try {
+            serialPort.closePort();
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeToSerialPort(String command) throws SerialPortException {
         serialPort.writeString(command + END_CHAR);
     }
 
-    public void initSerialPort(PortReaderAction readerAction) throws InterruptedException {
+    public void initSerialPort(PortReaderAction readerAction) {
         serialPort = new SerialPort(COM_PORT);
         try {
             serialPort.openPort();
